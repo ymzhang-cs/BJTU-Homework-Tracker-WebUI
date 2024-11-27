@@ -5,6 +5,7 @@
   <v-app>
     <v-app-bar>
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
+      BJTU Homework Tracker
     </v-app-bar>
     <v-main>
       <v-container>
