@@ -10,4 +10,5 @@ const vuetify = createVuetify({
     }
 });
 
-createApp(App).use(vuetify).mount("#app")
+const app = createApp(App).use(vuetify);
+window.addEventListener("pywebviewready", () => app.mount("#app"));
