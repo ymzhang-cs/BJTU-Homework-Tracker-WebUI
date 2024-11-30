@@ -9,6 +9,7 @@ export interface Homework {
 
 interface PyWebviewApi {
     listAllHomework: () => Promise<Homework[]>;
+    loginViaMis: () => void;
 }
 
 class PyWebview {
