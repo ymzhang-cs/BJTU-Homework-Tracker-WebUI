@@ -31,8 +31,5 @@ const drawerHidden = ref(false);
   </v-app>
 </template>
 
-<style>
-html {
-  scrollbar-width: none;
-}
+<style scoped>
 </style>

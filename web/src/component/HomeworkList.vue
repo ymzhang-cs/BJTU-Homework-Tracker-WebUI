@@ -11,7 +11,7 @@ const props = defineProps({
 <template>
   <div class="homework-list d-flex flex-row flex-wrap justify-space-around">
     <HomeworkCard v-for="hw in props.homework"
-                  class="homework-card ma-4"
+                  class="homework-card ma-2 flex-grow-1"
                   :course-name="hw.courseName"
                   :title="hw.title"
                   :submit-status="hw.submitStatus"
@@ -23,8 +23,4 @@ const props = defineProps({
 </template>
 
 <style scoped>
-.homework-card {
-  flex-grow: 1;
-  margin: 1rem;
-}
 </style>
