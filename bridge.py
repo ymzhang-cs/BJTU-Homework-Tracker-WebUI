@@ -1,9 +1,12 @@
 import time
 
-from login import login_via_mis
+from login import login_via_mis, LogginStatus
 
 
 class Bridge:
+    def __init__(self):
+        self.login_status = LogginStatus.NOT_LOGGED_IN
+
     def listAllHomework(self):
         time.sleep(1.0)
         return [
@@ -12,4 +15,10 @@ class Bridge:
         ]
 
     def loginViaMis(self):
-        login_via_mis()
+        def callback(status):
+            self.login_status = status
+        self.login_status = LogginStatus.LOGGING_IN
+        login_via_mis(callback)
+
+    def getLoginStatus(self):
+        return self.login_status

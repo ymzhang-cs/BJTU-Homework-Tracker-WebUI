@@ -4,11 +4,16 @@ import webview
 
 __login_callback: Callable[[str], None] | None = None
 
+class LogginStatus:
+    NOT_LOGGED_IN = 0
+    LOGGING_IN = 1
+    LOGGED_IN = 2
+
 def set_login_callback(callback):
     global __login_callback
     __login_callback = callback
 
-def make_on_login(jump_page):
+def make_on_login(jump_page, callback = None):
     def on_login(window):
         url = window.get_current_url()
         if url.find('bksy.bjtu.edu.cn/login_introduce_t.html') != -1:
@@ -22,12 +27,19 @@ def make_on_login(jump_page):
             window.destroy()
             if __login_callback:
                 __login_callback(jsessionid)
+                if callback is not None:
+                    callback()
     return on_login
 
-def login_via_mis():
+def login_via_mis(callback):
     login_url = 'https://mis.bjtu.edu.cn/module/module/104/'
     jump_page = 'https://bksycenter.bjtu.edu.cn/NoMasterJumpPage.aspx?URL=jwcZhjx&FPC=page:jwcZhjx'
 
     window = webview.create_window(title='MIS 登录', url=login_url)
 
-    window.events.loaded += make_on_login(jump_page)
+    window.events.loaded += make_on_login(jump_page, callback)
+
+    def window_closed():
+        callback(LogginStatus.NOT_LOGGED_IN)
+
+    window.events.closed += window_closed
