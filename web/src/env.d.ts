@@ -7,8 +7,11 @@ export interface Homework {
     dueAt: string;
 }
 
+
 interface PyWebviewApi {
     listAllHomework: () => Promise<Homework[]>;
+    loginViaMis: () => Promise<void>;
+    getLoginStatus: () => Promise<LoginStatus>;
 }
 
 class PyWebview {
