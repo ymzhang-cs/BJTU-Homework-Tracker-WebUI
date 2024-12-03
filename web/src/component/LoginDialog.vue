@@ -1,24 +1,48 @@
 <script setup>
-import {ref} from "vue";
+import {reactive, ref} from "vue";
 import {LoginStatus} from "../login";
+import CoursePlatformLogin from "./CoursePlatformLogin.vue";
 const dialog = defineModel('dialog')
 
-const selection = ref(null);
+const loginMethod = ref(null);
 const loggingIn = ref(false);
+
+const cpCredential = reactive({
+  account: '',
+  password: ''
+});
 
 async function login() {
   loggingIn.value = true;
-  if(selection.value === 'MIS') {
+  if(loginMethod.value === 'mis') {
     await pywebview.api.loginViaMis();
   }
   let i = setInterval(async () => {
-    console.log(await pywebview.api.getLoginStatus());
     if(await pywebview.api.getLoginStatus() !== LoginStatus.LoggingIn) {
       loggingIn.value = false;
       clearInterval(i);
     }
   }, 200);
 }
+
+const loginMethods = [
+  {
+    "title": "MIS",
+    "value": "mis",
+  },
+  {
+    "title": "Cookies",
+    "value": "cookie",
+  },
+  {
+    "title": "课程平台",
+    "value": "cp",
+  },
+  {
+    "title": "课程平台(哈希密码)",
+    "value": "cp-hash",
+  }
+];
 
 </script>
 
@@ -28,7 +52,7 @@ async function login() {
       <v-card>
         <v-card-title>登录</v-card-title>
         <v-card-text>
-          <v-select label="登录方式" :items="['MIS']" v-model="selection"/>
+          <v-select label="登录方式" :items="loginMethods" item-title="title" item-value="value"  v-model="loginMethod"/>
         </v-card-text>
         <v-card-actions>
           <v-spacer/>
