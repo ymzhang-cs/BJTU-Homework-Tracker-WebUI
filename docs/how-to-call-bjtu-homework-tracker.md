@@ -15,7 +15,7 @@ BJTU-Homework-Tracker 模块是一个用于查询北京交通大学（BJTU）学
     切换到使用的 Python 环境，在 whl 文件路径下使用 `pip` 进行安装：
 
     ```bash
-    pip install BJTU-Homework-Tracker-0.2.0-py3-none-any.whl
+    pip install bjtu_homework_tracker-0.2.0-py3-none-any.whl
     ```
 
 2. 使用 PyPI 进行安装
