@@ -2,47 +2,78 @@
 import {reactive, ref} from "vue";
 import {LoginStatus} from "../login";
 import CoursePlatformLogin from "./CoursePlatformLogin.vue";
-const dialog = defineModel('dialog')
+import CookiesLogin from "./CookiesLogin.vue";
+
+const dialog = defineModel('dialog', {type: Boolean, default: false});
+const loginStatus = defineModel('loginStatus', {type: Number, default: 0});
+
 
 const loginMethod = ref(null);
 const loggingIn = ref(false);
-
 const cpCredential = reactive({
   account: '',
   password: ''
 });
+const cookiesCredential = ref('');
 
-async function login() {
-  loggingIn.value = true;
-  if(loginMethod.value === 'mis') {
-    await pywebview.api.loginViaMis();
-  }
-  let i = setInterval(async () => {
-    if(await pywebview.api.getLoginStatus() !== LoginStatus.LoggingIn) {
-      loggingIn.value = false;
-      clearInterval(i);
-    }
-  }, 200);
-}
 
 const loginMethods = [
   {
-    "title": "MIS",
-    "value": "mis",
+    title: "MIS",
+    value: "mis",
+    async login() {
+      await pywebview.api.loginViaMis();
+    }
   },
   {
-    "title": "Cookies",
-    "value": "cookie",
+    title: "Cookies",
+    value: "cookies",
+    async login() {
+      await pywebview.api.loginViaCookies(cookiesCredential.value);
+    }
   },
   {
-    "title": "课程平台",
-    "value": "cp",
+    title: "课程平台",
+    value: "cp",
+    async login() {
+      await pywebview.api.loginViaCoursePlatform(cpCredential.account, `pass:${cpCredential.password}`);
+    }
   },
   {
-    "title": "课程平台(哈希密码)",
-    "value": "cp-hash",
+    title: "课程平台(哈希密码)",
+    value: "cp-hash",
+    async login() {
+      await pywebview.api.loginViaCoursePlatform(cpCredential.account, `hash:${cpCredential.password}`);
+    }
   }
 ];
+
+async function login() {
+  loggingIn.value = true;
+  loginStatus.value = LoginStatus.LoggingIn;
+
+  const method = loginMethods.find((method) => method.value === loginMethod.value)
+  if(method){
+    await method.login();
+  }
+
+  // because pywebview cannot run js callbacks
+  let i = setInterval(async () => {
+    const status = await pywebview.api.getLoginStatus();
+    loginStatus.value = Number(status);
+
+    if(status === LoginStatus.LoggingIn) {
+      return;
+    }
+
+    loggingIn.value = false;
+    if(status === LoginStatus.LoggedIn) {
+      dialog.value = false;
+    }
+    clearInterval(i);
+  }, 200);
+}
+
 
 </script>
 
@@ -53,6 +84,8 @@ const loginMethods = [
         <v-card-title>登录</v-card-title>
         <v-card-text>
           <v-select label="登录方式" :items="loginMethods" item-title="title" item-value="value"  v-model="loginMethod"/>
+          <CoursePlatformLogin v-if="loginMethod === 'cp' || loginMethod === 'cp-hash'" v-model:account="cpCredential.account" v-model:password="cpCredential.password"/>
+          <CookiesLogin v-else-if="loginMethod === 'cookies'" v-model:cookies="cookiesCredential"/>
         </v-card-text>
         <v-card-actions>
           <v-spacer/>
