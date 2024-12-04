@@ -9,9 +9,10 @@ const props = defineProps({
 })
 </script>
 <template>
-  <div class="homework-list d-flex flex-row flex-wrap justify-space-around">
+  <v-container class="homework-list d-flex flex-row flex-wrap justify-space-around">
     <HomeworkCard v-for="hw in props.homework"
                   class="homework-card ma-2 flex-grow-1"
+                  :key="`{hw.courseName}-${hw.title}`"
                   :course-name="hw.courseName"
                   :title="hw.title"
                   :submit-status="hw.submitStatus"
@@ -19,7 +20,7 @@ const props = defineProps({
                   :open-at="hw.openAt"
                   :due-at="hw.dueAt">
     </HomeworkCard>
-  </div>
+  </v-container>
 </template>
 
 <style scoped>
