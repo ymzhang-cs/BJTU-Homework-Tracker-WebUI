@@ -20,5 +20,14 @@ class Bridge:
         self.login_status = LogginStatus.LOGGING_IN
         login_via_mis(callback)
 
+    def loginViaCookies(self, cookies):
+        self.login_status = LogginStatus.LOGGED_IN
+
+    def loginViaCoursePlatform(self, account, password):
+        self.login_status = LogginStatus.LOGGED_IN
+
     def getLoginStatus(self):
         return self.login_status
+
+    def logout(self):
+        self.login_status = LogginStatus.NOT_LOGGED_IN

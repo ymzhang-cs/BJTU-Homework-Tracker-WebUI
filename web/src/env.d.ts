@@ -9,13 +9,19 @@ export interface Homework {
 
 
 interface PyWebviewApi {
-    listAllHomework: () => Promise<Homework[]>;
-    loginViaMis: () => Promise<void>;
-    getLoginStatus: () => Promise<LoginStatus>;
+    listAllHomework(): Promise<Homework[]>;
+    loginViaMis(): Promise<void>;
+    loginViaCookies(cookies: string): Promise<void>;
+    loginViaCoursePlatform(account: string, password: string): Promise<void>;
+    getLoginStatus(): Promise<LoginStatus>;
+    logout(): Promise<void>;
 }
 
 class PyWebview {
     api: PyWebviewApi;
 }
 
-export declare const pywebview: PyWebview;
+export declare global {
+    const pywebview: PyWebview;
+}
+
